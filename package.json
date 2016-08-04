@@ -1,0 +1,28 @@
+{
+  "name": "ybruin-postpackager-loader",
+  "description": "resource loader",
+  "version": "0.1.0",
+  "author": {
+    "name": "Ybruin Team"
+  },
+  "keywords": [
+    "ybruin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ybruin/ybruin-postpackager-loader.git"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/ut --recursive"
+  },
+  "dependencies": {
+    
+  },
+  "bugs": {
+    "url": "https://github.com/Ybruin/ybruin-postpackager-loader/issues"
+  }
+}
