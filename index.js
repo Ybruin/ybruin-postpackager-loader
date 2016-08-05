@@ -4,26 +4,26 @@ var createCombo = require('./lib/createCombo');
 var replaceTpl = require('./lib/tpl');
 var analyzeComp = require('./lib/analyzeComp');
 
-var createFrameworkConfig = function(ret, conf, settings, opt){
+var createFrameworkConfig = function(ret, conf, settings, opt) {
     var map = {};
     map.deps = {};
     var cacheDeps = {};
     var filePath;
     //引入组件js时把样式加入依赖表
-    fis.util.map(ret.src, function(subpath, file){
-        if(file.requires && file.requires.length){
+    fis.util.map(ret.src, function(subpath, file) {
+        if (file.requires && file.requires.length) {
             map.deps[file.id] = map.deps[file.id] || [];
             map.deps[file.id] = map.deps[file.id].concat(file.requires);
-            file.requires.forEach(function(req){
+            file.requires.forEach(function(req) {
                 filePath = req.split(path.sep);
-                if(filePath[0] == 'components'){
+                if (filePath[0] == 'components') {
                     var comp = analyzeComp(filePath[1]);
                     var jsPath = comp.getJSPATH();
                     var cssPath = comp.getCSSPATH();
                     var jsId = comp.getJSID();
                     var cssId = comp.getCSSID();
-                    if(fs.existsSync(cssPath)){
-                        if(fs.existsSync(jsPath)){
+                    if (fs.existsSync(cssPath)) {
+                        if (fs.existsSync(jsPath)) {
                             map.deps[jsId] = map.deps[jsId] || [];
                             map.deps[jsId].push(cssId);
                         }
@@ -32,41 +32,41 @@ var createFrameworkConfig = function(ret, conf, settings, opt){
             })
         }
     });
-    
+
     //再次遍历文件，找到isViews标记的文件
-     fis.util.map(ret.src, function(subpath, file){
+    fis.util.map(ret.src, function(subpath, file) {
         //有isViews标记，并且html类文件，才需要做替换
-        if(file.isViews && file.isHtmlLike){
+        if (file.isViews && file.isHtmlLike) {
             var content = file.getContent();
-           //替换tpl
-            replaceTpl(content,file);
+            //替换tpl
+            replaceTpl(content, file);
             //获取依赖组件
-            var compArrs = fis.config.get(file.filename+'.compDeps') || [];
+            var compArrs = fis.config.get(file.filename + '.compDeps') || [];
             //组件css和js加入依赖表
-            compArrs.forEach(function(compName){
-                var comp = analyzeComp(compName);
-                var jsId = comp.getJSID();
-                var cssId = comp.getCSSID();
-                var jsPath = comp.getJSPATH();
-                var cssPath = comp.getCSSPATH();
-                var entryId = 'js/'+file.filename+'.js';
-                map.deps[entryId] = map.deps[entryId] || [];
-                if(fs.existsSync(jsPath)){
-                    add(map.deps[entryId],jsId);
-                }
-                if(fs.existsSync(cssPath)){
-                    add(map.deps[entryId],cssId);
-                }  
-            })
-            //创建combo连接,替换钩子
-            createCombo(ret,file.id,map.deps,settings);
+            compArrs.forEach(function(compName) {
+                    var comp = analyzeComp(compName);
+                    var jsId = comp.getJSID();
+                    var cssId = comp.getCSSID();
+                    var jsPath = comp.getJSPATH();
+                    var cssPath = comp.getCSSPATH();
+                    var entryId = 'js/' + file.filename + '.js';
+                    map.deps[entryId] = map.deps[entryId] || [];
+                    if (fs.existsSync(jsPath)) {
+                        add(map.deps[entryId], jsId);
+                    }
+                    if (fs.existsSync(cssPath)) {
+                        add(map.deps[entryId], cssId);
+                    }
+                })
+                //创建combo连接,替换钩子
+            createCombo(ret, file.id, map.deps, settings);
         }
     });
 
-    function add(arrs,newItem){
+    function add(arrs, newItem) {
         var isExist = false;
-        arrs.forEach(function(i){
-            if(arrs[i] === newItem){
+        arrs.forEach(function(i) {
+            if (arrs[i] === newItem) {
                 isExist = true;
             }
         });
