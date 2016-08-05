@@ -9,12 +9,13 @@ var createFrameworkConfig = function(ret, conf, settings, opt){
     map.deps = {};
     var cacheDeps = {};
     var filePath;
+    //引入组件js时把样式加入依赖表
     fis.util.map(ret.src, function(subpath, file){
         if(file.requires && file.requires.length){
             map.deps[file.id] = map.deps[file.id] || [];
             map.deps[file.id] = map.deps[file.id].concat(file.requires);
             file.requires.forEach(function(req){
-                filePath = req.split('/');
+                filePath = req.split(path.sep);
                 if(filePath[0] == 'components'){
                     var comp = analyzeComp(filePath[1]);
                     var jsPath = comp.getJSPATH();
